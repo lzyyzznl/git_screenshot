@@ -1,0 +1,47 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# 项目结构指南
+
+## 目录组织
+
+### 源码目录 (src/)
+主要的源代码都位于 [src/](mdc:src/) 目录下：
+
+- **[components/](mdc:src/components/)** - Vue 组件
+  - [Popup.vue](mdc:src/components/Popup.vue) - 主弹窗组件
+  - [App.vue](mdc:src/components/App.vue) - 应用根组件
+  
+- **[utils/](mdc:src/utils/)** - 工具函数
+  - [gifGenerator.ts](mdc:src/utils/gifGenerator.ts) - GIF 生成器工具
+
+- **[styles/](mdc:src/styles/)** - 样式文件
+  - Less CSS 样式文件
+
+- **[types/](mdc:src/types/)** - TypeScript 类型定义
+  - gif.js 相关类型定义
+
+- **[public/](mdc:src/public/)** - 静态资源
+  - [icons/](mdc:src/public/icons/) - 扩展图标资源
+  - gif.worker.js - GIF 处理 Web Worker
+
+### 关键文件
+- **[popup.html](mdc:src/popup.html)** - 弹窗页面模板
+- **[popup.ts](mdc:src/popup.ts)** - 弹窗脚本入口点
+- **[background.ts](mdc:src/background.ts)** - 后台服务脚本
+- **[manifest.json](mdc:src/manifest.json)** - Chrome 扩展配置文件
+- **[app.html](mdc:src/app.html)** - 应用页面模板
+- **[app.ts](mdc:src/app.ts)** - 应用脚本入口点
+
+### 构建输出 (extension/)
+构建后的文件输出到 `extension/` 目录：
+- 编译后的 JavaScript 文件
+- 复制的静态资源
+- 生成的图标文件
+
+### 配置文件
+- **[vite.config.ts](mdc:vite.config.ts)** - Vite 构建配置，包含自定义插件
+- **[tsconfig.json](mdc:tsconfig.json)** - TypeScript 配置
+- **[package.json](mdc:package.json)** - 项目依赖和脚本配置
