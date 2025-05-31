@@ -1,6 +1,6 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
 # 编码规范和最佳实践
@@ -9,7 +9,7 @@ alwaysApply: false
 
 ### 类型定义
 - 所有函数和变量都应有明确的类型定义
-- 类型定义文件位于 [types/](mdc:src/types/) 目录
+- 类型定义文件位于 [types/](mdc:src/types) 目录
 - 使用 `interface` 定义对象结构，使用 `type` 定义联合类型
 
 ### 配置文件
@@ -20,12 +20,12 @@ alwaysApply: false
 
 ### 组件结构
 - 使用 Composition API 和 `<script setup>` 语法
-- 组件文件位于 [components/](mdc:src/components/) 目录
+- 组件文件位于 [components/](mdc:src/components) 目录
 - 主要组件：[Popup.vue](mdc:src/components/Popup.vue), [App.vue](mdc:src/components/App.vue)
 
 ### 样式
 - 使用 Less CSS 预处理器
-- 样式文件位于 [styles/](mdc:src/styles/) 目录
+- 样式文件位于 [styles/](mdc:src/styles) 目录
 - 组件内样式使用 `<style scoped>` 确保样式隔离
 
 ## Chrome 扩展规范
@@ -51,7 +51,7 @@ alwaysApply: false
 
 ### 目录结构
 - 功能模块分目录存放：`components/`, `utils/`, `types/`, `styles/`
-- 静态资源放在 [public/](mdc:src/public/) 目录
+- 静态资源放在 [public/](mdc:src/public) 目录
 
 ## 错误处理
 
@@ -74,3 +74,4 @@ alwaysApply: false
 ### 内存管理
 - 及时释放媒体流资源
 - 避免内存泄漏，特别是在录制和转换过程中
+

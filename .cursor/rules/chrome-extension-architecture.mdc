@@ -1,6 +1,6 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: false
 ---
 # Chrome 扩展架构
@@ -66,4 +66,5 @@ alwaysApply: false
 ## 文件组织
 - **HTML 页面**: [popup.html](mdc:src/popup.html), [app.html](mdc:src/app.html)
 - **脚本入口**: [popup.ts](mdc:src/popup.ts), [background.ts](mdc:src/background.ts), [app.ts](mdc:src/app.ts)
-- **静态资源**: 图标文件位于 [public/icons/](mdc:src/public/icons/)
+- **静态资源**: 图标文件位于 [public/icons/](mdc:src/public/icons)
+
