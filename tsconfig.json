@@ -18,12 +18,30 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "preserve",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "*"
+      ],
+      "~/*": [
+        "./*"
+      ]
+    },
     "types": [
-      "chrome"
+      "chrome",
+      "cypress",
+      "node"
     ]
   },
   "include": [
-    "src/**/*"
+    ".plasmo/index.d.ts",
+    "**/*",
+    "cypress/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "build",
+    "dist"
   ],
   "references": [
     {

@@ -6,7 +6,7 @@ GifShot - 屏幕录制 GIF 插件
 
 ## 产品简介
 
-GifShot 是一款 Chrome 浏览器插件，支持一键录制当前标签页、桌面或应用窗口的屏幕内容，并将其保存为 GIF 动图，便于分享和传播。
+GifShot 是一款基于 **Plasmo 框架** 开发的 Chrome 浏览器插件，支持一键录制当前标签页、桌面或应用窗口的屏幕内容，并将其保存为 GIF 动图，便于分享和传播。
 
 ## 主要功能
 
@@ -20,7 +20,9 @@ GifShot 是一款 Chrome 浏览器插件，支持一键录制当前标签页、�
    - 用户可自定义录制时长（1-60秒）或手动停止录制
 5. **录制区域选择**（已实现）
    - 支持选择录制区域（如全屏、窗口、标签页）
-6. **简单编辑**（待扩展）
+6. **性能优化**（已实现）
+   - 智能帧率控制、内存管理、超时保护
+7. **简单编辑**（待扩展）
    - 支持裁剪、调整帧率、添加文字等简单编辑功能
 
 ## 目标用户
@@ -39,49 +41,51 @@ GifShot 是一款 Chrome 浏览器插件，支持一键录制当前标签页、�
 
 ## 技术选型
 
-- **前端框架**: Vue 3 + TypeScript
-- **样式处理**: Less
-- **构建工具**: Vite
-- **依赖管理**: Yarn
-- **Chrome 插件 API**: Manifest V3
-- **GIF 处理**: gif.js
+- **开发框架**: [Plasmo](https://www.plasmo.com/) v0.90.5 - 现代化浏览器扩展开发框架
+- **前端框架**: React 18 + TypeScript
+- **样式处理**: Less CSS 预处理器
+- **构建工具**: Plasmo 内置构建系统
+- **依赖管理**: npm
+- **Chrome 插件**: Manifest V3
+- **GIF 处理**: gif.js v0.2.0
 
 ## 主要模块
 
 ### 项目结构
 ```
-gif_screenshot/
-├── src/                    # 源码目录
-│   ├── components/         # Vue组件
-│   │   └── Popup.vue      # 弹窗主组件（已实现）
-│   │   └── Record.vue     # 录制主组件（已实现）
-│   ├── utils/             # 工具函数
-│   │   └── gifGenerator.ts # GIF生成器（已实现）
-│   ├── styles/            # 样式文件
-│   │   └── popup.less     # 弹窗样式（已实现）
-│   ├── types/             # 类型定义
-│   │   └── gif.d.ts       # gif.js类型定义（已实现）
-│   ├── public/            # 静态资源
-│   │   └── icons/         # 插件图标（需要真实图标文件）
-│   ├── popup.html         # 弹窗页面（已实现）
-│   ├── popup.ts           # 弹窗入口（已实现）
-│   ├── background.ts      # 后台脚本（已实现）
-│   └── manifest.json      # 插件配置（已实现）
-├── extension/             # 构建输出目录
-├── package.json           # 项目配置（已实现）
-├── vite.config.ts         # 构建配置（已实现）
-├── tsconfig.json          # TypeScript配置（已实现）
-└── README.md              # 项目文档（已实现）
+gifshot-chrome-extension/
+├── assets/                 # 静态资源文件
+│   ├── icon.png           # 主图标 (128x128)
+│   ├── icon16.png         # 16x16 图标
+│   ├── icon32.png         # 32x32 图标
+│   ├── icon48.png         # 48x48 图标
+│   ├── icon128.png        # 128x128 图标
+│   └── gif.worker.js      # GIF 处理 Worker
+├── tabs/                  # 标签页组件
+│   ├── app.tsx            # 主应用页面 (React)
+│   └── app.less           # 应用样式
+├── utils/                 # 工具函数
+│   └── gifGenerator.ts    # GIF 生成逻辑（已优化）
+├── build/                 # 构建输出目录
+│   └── chrome-mv3-prod/   # 生产构建结果
+├── popup.tsx              # 弹窗组件 (React)
+├── popup.less             # 弹窗样式
+├── background.ts          # 后台脚本 (Plasmo)
+├── package.json           # 项目配置（包含 manifest）
+├── tsconfig.json          # TypeScript 配置
+├── README.md              # 项目文档
+├── INSTALL.md             # 安装说明
+└── product.md             # 产品说明
 ```
 
 ### 主要流程
 
-1. 用户点击插件图标，弹出 popup.html
+1. 用户点击插件图标，弹出 popup.tsx (React 组件)
 2. 选择录制类型（标签页/桌面/窗口），设置录制时长
 3. 通过 `navigator.mediaDevices.getDisplayMedia()` 获取屏幕流
 4. 使用 `MediaRecorder` 录制视频帧
 5. 录制过程中实时显示计时器和录制状态
-6. 录制结束后，使用 gif.js 将视频转换为 GIF
+6. 录制结束后，使用优化的 gif.js 将视频转换为 GIF
 7. 显示 GIF 预览，用户可选择保存或重新录制
 8. 点击保存后，通过浏览器下载 API 保存 GIF 文件
 
@@ -92,51 +96,80 @@ gif_screenshot/
 - 支持多种媒体源：tab（标签页）、screen（桌面）、window（窗口）
 - 通过 `MediaRecorder` 录制 WebM 格式视频
 
-### 视频转 GIF
+### 视频转 GIF (已优化)
 - 使用 gif.js 库进行客户端 GIF 生成
 - 通过 Canvas 逐帧绘制视频内容
-- 可调整帧率（默认10fps）和质量参数
+- 智能参数调整：帧率 6 FPS，分辨率最大 600x400
+- 动态 Worker 数量管理（基于 CPU 核心数）
+- 超时保护机制（60秒限制）
 
 ### 性能优化
 - 异步处理视频转换，避免阻塞用户界面
-- 合理的帧率设置平衡质量和文件大小
+- 智能内存管理和资源清理
+- 优化的帧率设置平衡质量和文件大小
+- 防重复调用和进度重置机制
 - 及时释放媒体资源和对象URL
 
 ### 兼容性
 - 基于 Chrome Extension Manifest V3
 - 支持 Chrome 88+ 和其他 Chromium 内核浏览器
 - 使用现代 Web API，确保功能稳定性
+- Plasmo 框架提供跨浏览器兼容性
 
 ## 已实现功能
 
-✅ 基础项目结构搭建
-✅ Chrome 插件配置文件
-✅ Vue 3 + TypeScript 开发环境
+✅ Plasmo 框架项目结构搭建
+✅ Chrome 插件配置文件（集成在 package.json）
+✅ React 18 + TypeScript 开发环境
 ✅ 屏幕录制功能（标签页、桌面、窗口）
-✅ GIF 生成和转换
+✅ 优化的 GIF 生成和转换算法
 ✅ 录制时长控制
 ✅ 实时录制状态显示
 ✅ GIF 预览和保存
-✅ 现代化用户界面
-✅ 构建和打包配置
+✅ 现代化用户界面（React + Less）
+✅ Plasmo 自动化构建和热重载
+✅ 性能优化和超时保护
+✅ 完整的文档和安装指南
 
 ## 待完善功能
 
-🔄 插件图标文件（需要设计师提供）
+🔄 插件商店发布
 🔄 更多编辑功能（裁剪、文字添加等）
-🔄 录制质量设置
+🔄 录制质量设置用户界面
 🔄 快捷键支持
 🔄 录制历史管理
+🔄 单元测试和端到端测试
+
+## 架构优势
+
+### Plasmo 框架优势
+- **声明式开发**：简化扩展开发复杂性
+- **自动化构建**：内置优化的构建管道
+- **热重载**：开发期间实时更新
+- **TypeScript 支持**：完整的类型安全
+- **现代化工具链**：集成最佳实践
+
+### React 生态优势
+- **组件化设计**：可维护的模块化代码
+- **Hooks 支持**：现代状态管理
+- **丰富生态**：庞大的第三方库支持
+- **开发效率**：快速迭代和调试
 
 ## 安装和使用
 
 ### 开发环境
-1. `yarn install` - 安装依赖
-2. `yarn build` - 构建项目
-3. 在 Chrome 中加载 `extension` 文件夹作为未打包的扩展程序
+1. `npm install` - 安装依赖
+2. `npm run dev` - 启动开发服务器
+3. `npm run build` - 构建生产版本
+4. 在 Chrome 中加载 `build/chrome-mv3-prod` 文件夹
 
 ### 用户使用
 1. 点击浏览器工具栏中的 GifShot 图标
 2. 选择录制类型和时长
 3. 开始录制
 4. 预览并保存生成的 GIF
+
+### 性能建议
+- 录制时长建议不超过 8 秒
+- 录制分辨率会自动优化到 600x400
+- 系统内存建议 4GB 以上以获得最佳体验

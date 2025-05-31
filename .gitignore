@@ -8,6 +8,10 @@ yarn-error.log*
 extension/
 dist/
 build/
+videos/
+downloads/
+screenshots/
+.plasmo/
 
 # Environment variables
 .env

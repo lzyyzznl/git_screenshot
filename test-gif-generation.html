@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>GIF生成测试</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				max-width: 800px;
+				margin: 0 auto;
+				padding: 20px;
+			}
+			.container {
+				text-align: center;
+			}
+			button {
+				background: #007cba;
+				color: white;
+				border: none;
+				padding: 10px 20px;
+				margin: 10px;
+				border-radius: 5px;
+				cursor: pointer;
+				font-size: 16px;
+			}
+			button:hover {
+				background: #005a87;
+			}
+			button:disabled {
+				background: #ccc;
+				cursor: not-allowed;
+			}
+			.log {
+				text-align: left;
+				background: #f5f5f5;
+				padding: 10px;
+				margin: 20px 0;
+				border-radius: 5px;
+				max-height: 300px;
+				overflow-y: auto;
+			}
+			.progress {
+				width: 100%;
+				height: 20px;
+				background: #f0f0f0;
+				border-radius: 10px;
+				margin: 20px 0;
+			}
+			.progress-bar {
+				height: 100%;
+				background: #007cba;
+				border-radius: 10px;
+				width: 0%;
+				transition: width 0.3s ease;
+			}
+			.preview {
+				margin: 20px 0;
+				border: 2px dashed #ccc;
+				padding: 20px;
+				border-radius: 10px;
+			}
+			.canvas-container {
+				margin: 20px 0;
+			}
+			canvas {
+				border: 1px solid #ccc;
+				margin: 10px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<h1>🎨 GIF生成功能测试</h1>
+			<p>这个测试页面将创建一个真实的GIF动画文件</p>
+
+			<div class="canvas-container">
+				<h3>预览画布:</h3>
+				<canvas id="previewCanvas" width="200" height="200"></canvas>
+			</div>
+
+			<button id="generateBtn" onclick="generateTestGif()">
+				🎬 生成测试GIF
+			</button>
+			<button id="clearBtn" onclick="clearLog()">🧹 清除日志</button>
+
+			<div class="progress">
+				<div class="progress-bar" id="progressBar"></div>
+			</div>
+			<div id="progressText">准备开始...</div>
+
+			<div class="log" id="logContainer"></div>
+
+			<div class="preview" id="previewContainer">
+				<p>生成的GIF将显示在这里</p>
+			</div>
+		</div>
+
+		<!-- 引入gif.js库 -->
+		<script src="node_modules/gif.js/dist/gif.js"></script>
+
+		<script>
+			let currentGif = null;
+
+			function log(message) {
+				const logContainer = document.getElementById("logContainer");
+				const time = new Date().toLocaleTimeString();
+				logContainer.innerHTML += `<div>[${time}] ${message}</div>`;
+				logContainer.scrollTop = logContainer.scrollHeight;
+				console.log(message);
+			}
+
+			function clearLog() {
+				document.getElementById("logContainer").innerHTML = "";
+				document.getElementById("progressText").textContent = "准备开始...";
+				updateProgress(0);
+			}
+
+			function updateProgress(percentage) {
+				const progressBar = document.getElementById("progressBar");
+				const progressText = document.getElementById("progressText");
+				progressBar.style.width = percentage + "%";
+				progressText.textContent = `进度: ${Math.round(percentage)}%`;
+			}
+
+			function setButtonState(enabled) {
+				document.getElementById("generateBtn").disabled = !enabled;
+			}
+
+			async function generateTestGif() {
+				try {
+					setButtonState(false);
+					clearLog();
+					log("🎬 开始生成GIF测试...");
+
+					// 检查gif.js是否可用
+					if (typeof GIF === "undefined") {
+						throw new Error("GIF.js库未加载");
+					}
+					log("✅ GIF.js库已加载");
+
+					// 创建GIF实例（使用主线程模式）
+					const gif = new GIF({
+						workers: 0, // 主线程模式，避免worker问题
+						quality: 10,
+						width: 200,
+						height: 200,
+						debug: false,
+						dither: false,
+						background: "#ffffff",
+					});
+					log("✅ GIF实例创建成功");
+
+					// 获取预览画布
+					const canvas = document.getElementById("previewCanvas");
+					const ctx = canvas.getContext("2d");
+
+					// 生成动画帧
+					const frameCount = 12;
+					const colors = [
+						"#ff0000",
+						"#ff8800",
+						"#ffff00",
+						"#88ff00",
+						"#00ff00",
+						"#00ff88",
+						"#00ffff",
+						"#0088ff",
+						"#0000ff",
+						"#8800ff",
+						"#ff00ff",
+						"#ff0088",
+					];
+
+					for (let i = 0; i < frameCount; i++) {
+						// 清除画布
+						ctx.clearRect(0, 0, 200, 200);
+
+						// 绘制背景渐变
+						const gradient = ctx.createRadialGradient(
+							100,
+							100,
+							0,
+							100,
+							100,
+							100
+						);
+						gradient.addColorStop(0, colors[i]);
+						gradient.addColorStop(1, "#ffffff");
+						ctx.fillStyle = gradient;
+						ctx.fillRect(0, 0, 200, 200);
+
+						// 绘制旋转的形状
+						ctx.save();
+						ctx.translate(100, 100);
+						ctx.rotate((i / frameCount) * Math.PI * 2);
+
+						// 绘制星形
+						ctx.fillStyle = "#000000";
+						ctx.beginPath();
+						for (let j = 0; j < 5; j++) {
+							const angle = (j / 5) * Math.PI * 2;
+							const x = Math.cos(angle) * 30;
+							const y = Math.sin(angle) * 30;
+							if (j === 0) ctx.moveTo(x, y);
+							else ctx.lineTo(x, y);
+
+							const innerAngle = ((j + 0.5) / 5) * Math.PI * 2;
+							const innerX = Math.cos(innerAngle) * 15;
+							const innerY = Math.sin(innerAngle) * 15;
+							ctx.lineTo(innerX, innerY);
+						}
+						ctx.closePath();
+						ctx.fill();
+						ctx.restore();
+
+						// 添加文字
+						ctx.fillStyle = "#000000";
+						ctx.font = "bold 16px Arial";
+						ctx.textAlign = "center";
+						ctx.fillText(`帧 ${i + 1}/${frameCount}`, 100, 30);
+
+						// 添加时间戳
+						ctx.font = "12px Arial";
+						ctx.fillText(new Date().toLocaleTimeString(), 100, 185);
+
+						// 添加帧到GIF
+						gif.addFrame(canvas, { delay: 250 }); // 250ms每帧
+						log(`✅ 添加第 ${i + 1} 帧`);
+
+						// 更新进度
+						updateProgress(((i + 1) / frameCount) * 50); // 前50%是帧创建
+
+						// 让UI更新
+						await new Promise((resolve) => setTimeout(resolve, 50));
+					}
+
+					log("🎬 开始渲染GIF文件...");
+
+					// 渲染GIF
+					const gifBlob = await new Promise((resolve, reject) => {
+						const timeout = setTimeout(() => {
+							reject(new Error("GIF渲染超时（30秒）"));
+						}, 30000);
+
+						gif.on("finished", (blob) => {
+							clearTimeout(timeout);
+							log("✅ GIF渲染完成！");
+							resolve(blob);
+						});
+
+						gif.on("error", (err) => {
+							clearTimeout(timeout);
+							log(`❌ GIF渲染错误: ${err}`);
+							reject(err);
+						});
+
+						gif.on("progress", (progress) => {
+							const percentage = 50 + progress * 50; // 后50%是渲染
+							updateProgress(percentage);
+							log(`🔄 渲染进度: ${Math.round(progress * 100)}%`);
+						});
+
+						gif.render();
+					});
+
+					// 验证生成的GIF
+					if (!gifBlob || gifBlob.size === 0) {
+						throw new Error("生成的GIF文件为空");
+					}
+
+					log(`🎉 GIF生成成功！`);
+					log(
+						`📊 文件大小: ${gifBlob.size} 字节 (${(gifBlob.size / 1024).toFixed(2)} KB)`
+					);
+					log(`📝 文件类型: ${gifBlob.type}`);
+
+					// 验证GIF文件头
+					const reader = new FileReader();
+					reader.onload = (e) => {
+						const arrayBuffer = e.target.result;
+						const uint8Array = new Uint8Array(arrayBuffer);
+						const header = Array.from(uint8Array.slice(0, 6))
+							.map((b) => String.fromCharCode(b))
+							.join("");
+
+						if (header === "GIF89a" || header === "GIF87a") {
+							log(`✅ 有效的GIF文件头: ${header}`);
+						} else {
+							log(`⚠️ 无效的GIF文件头: ${header}`);
+						}
+					};
+					reader.readAsArrayBuffer(gifBlob);
+
+					// 显示预览
+					const previewContainer = document.getElementById("previewContainer");
+					const url = URL.createObjectURL(gifBlob);
+					previewContainer.innerHTML = `
+                    <h3>🖼️ 生成的GIF预览:</h3>
+                    <img src="${url}" alt="生成的GIF" style="max-width: 100%; border: 1px solid #ccc; border-radius: 5px;">
+                    <br><br>
+                    <a href="${url}" download="test-animated-${Date.now()}.gif" style="display: inline-block; background: #28a745; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin: 10px;">
+                        💾 下载GIF文件
+                    </a>
+                    <button onclick="copyToClipboard('${url}')" style="background: #17a2b8; color: white; border: none; padding: 10px 20px; border-radius: 5px; margin: 10px; cursor: pointer;">
+                        📋 复制URL
+                    </button>
+                `;
+
+					// 保存到全局变量供调试
+					window.generatedGif = {
+						blob: gifBlob,
+						url: url,
+						size: gifBlob.size,
+						type: gifBlob.type,
+					};
+
+					log("📁 GIF文件已准备好下载！");
+					log("🔍 可通过 window.generatedGif 在开发者工具中访问");
+					updateProgress(100);
+				} catch (error) {
+					log(`❌ 生成失败: ${error.message}`);
+					updateProgress(0);
+				} finally {
+					setButtonState(true);
+				}
+			}
+
+			function copyToClipboard(text) {
+				navigator.clipboard
+					.writeText(text)
+					.then(() => {
+						log("📋 URL已复制到剪贴板");
+					})
+					.catch(() => {
+						log("❌ 无法复制到剪贴板");
+					});
+			}
+
+			// 页面加载完成后的初始化
+			window.onload = function () {
+				log("📄 页面加载完成");
+				log("🔧 正在检查依赖...");
+
+				if (typeof GIF !== "undefined") {
+					log("✅ GIF.js库已就绪");
+				} else {
+					log("❌ GIF.js库未加载，请检查依赖");
+				}
+
+				log("🚀 准备生成测试GIF");
+			};
+		</script>
+	</body>
+</html>
