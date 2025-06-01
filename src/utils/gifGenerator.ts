@@ -1,6 +1,18 @@
 import GIF from "gif.js";
 
-export async function generateGif(videoBlob: Blob): Promise<Blob> {
+interface GifOptions {
+	fps?: number;
+	quality?: number;
+	maxWidth?: number;
+	maxDuration?: number;
+}
+
+export async function generateGif(
+	videoBlob: Blob,
+	options: GifOptions = {}
+): Promise<Blob> {
+	const { fps = 8, quality = 10, maxWidth = 800, maxDuration = 10 } = options;
+
 	console.log("开始生成 GIF，视频大小:", videoBlob.size);
 
 	return new Promise((resolve, reject) => {
@@ -32,8 +44,7 @@ export async function generateGif(videoBlob: Blob): Promise<Blob> {
 				return;
 			}
 
-			// 设置合理的尺寸（最大 800px 宽度）
-			const maxWidth = 800;
+			// 设置合理的尺寸
 			const scale = Math.min(1, maxWidth / video.videoWidth);
 			canvas.width = Math.floor(video.videoWidth * scale);
 			canvas.height = Math.floor(video.videoHeight * scale);
@@ -42,22 +53,21 @@ export async function generateGif(videoBlob: Blob): Promise<Blob> {
 
 			const gif = new GIF({
 				workers: 2,
-				quality: 10,
+				quality,
 				width: canvas.width,
 				height: canvas.height,
-				workerScript: chrome.runtime.getURL("gif.worker.js"),
+				workerScript: browser.runtime.getURL("gif.worker.js"),
 				debug: true,
 			});
 
 			let currentTime = 0;
-			const frameRate = 8; // 降低帧率以减少文件大小
-			const frameInterval = 1 / frameRate;
-			const duration = Math.min(video.duration, 10); // 最大 10 秒
+			const frameInterval = 1 / fps;
+			const duration = Math.min(video.duration, maxDuration);
 			let frameCount = 0;
-			const maxFrames = Math.floor(duration * frameRate);
+			const maxFrames = Math.floor(duration * fps);
 
 			console.log("准备捕获帧:", {
-				frameRate,
+				fps,
 				duration,
 				maxFrames,
 			});
