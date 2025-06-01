@@ -1,0 +1,79 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# 开发指南
+
+## 开发环境设置
+
+### 系统要求
+- Node.js >= 16
+- Yarn >= 1.22
+- Chrome 浏览器（用于测试扩展）
+
+### 安装依赖
+```bash
+yarn install
+```
+
+## 开发命令
+
+### 开发模式
+```bash
+yarn dev
+```
+启动开发模式，监听文件变化并自动构建到 `extension/` 目录。
+
+### 生产构建
+```bash
+yarn build
+```
+构建生产版本的扩展文件。
+
+### 预览
+```bash
+yarn preview
+```
+预览构建后的文件。
+
+## 构建流程
+
+### Vite 配置
+构建配置位于 [vite.config.ts](mdc:vite.config.ts)，包含：
+
+1. **多入口点配置**:
+   - popup.ts → popup.js
+   - background.ts → background.js  
+   - app.ts → app.js
+
+2. **自定义插件功能**:
+   - 自动复制 [manifest.json](mdc:src/manifest.json)
+   - 复制静态资源（HTML 文件、Web Worker）
+   - 生成扩展图标
+   - 清理多余文件
+
+3. **输出配置**:
+   - 输出目录: `extension/`
+   - 文件命名: 简化的文件名
+   - 资源处理: 关闭公共目录复制
+
+## Chrome 扩展安装
+
+### 开发模式安装
+1. 运行 `yarn build` 构建项目
+2. 打开 Chrome 浏览器
+3. 访问 `chrome://extensions/`
+4. 开启"开发者模式"
+5. 点击"加载已解压的扩展程序"
+6. 选择项目的 `extension/` 目录
+
+### 文件监听
+使用 `yarn dev` 可以在开发时自动重新构建，但需要在 Chrome 扩展管理页面手动刷新扩展。
+
+## 关键开发文件
+
+- **[popup.ts](mdc:src/popup.ts)** - 弹窗界面逻辑
+- **[background.ts](mdc:src/background.ts)** - 后台服务，处理权限和消息
+- **[Popup.vue](mdc:src/components/Popup.vue)** - 主用户界面组件
+- **[gifGenerator.ts](mdc:src/utils/gifGenerator.ts)** - GIF 生成核心逻辑

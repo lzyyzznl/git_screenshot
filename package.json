@@ -1,70 +1,24 @@
 {
 	"name": "gifshot-chrome-extension",
-	"displayName": "GifShot - 屏幕录制 GIF 插件",
 	"version": "1.0.0",
-	"description": "一键录制屏幕并生成 GIF 动图",
-	"author": "GifShot Team",
+	"description": "屏幕录制 GIF 插件",
+	"main": "index.js",
 	"scripts": {
-		"dev": "plasmo dev",
-		"build": "plasmo build",
-		"package": "plasmo package",
-		"preview": "plasmo preview",
-		"test": "npm run test:clean && cypress run && npm run test:clean",
-		"test:open": "cypress open",
-		"test:e2e": "npm run test:clean && cypress run --spec 'cypress/e2e/**/*' && npm run test:clean",
-		"test:component": "npm run test:clean && cypress run --component && npm run test:clean",
-		"test:ci": "npm run build && npm run test",
-		"test:clean": "node scripts/clean-test-artifacts.js",
-		"test:clean-only": "node scripts/clean-test-artifacts.js"
-	},
-	"dependencies": {
-		"gif.js": "^0.2.0",
-		"react": "^18.2.0",
-		"react-dom": "^18.2.0"
+		"dev": "vite build --watch",
+		"build": "vite build",
+		"preview": "vite preview"
 	},
 	"devDependencies": {
-		"@babel/core": "^7.26.0",
-		"@babel/preset-react": "^7.26.3",
-		"@cypress/react18": "^2.0.1",
-		"@cypress/webpack-dev-server": "^3.14.0",
-		"@plasmohq/prettier-plugin-sort-imports": "4.0.1",
 		"@types/chrome": "^0.0.260",
-		"@types/cypress": "^0.1.6",
 		"@types/node": "^22.15.27",
-		"@types/react": "^18.2.0",
-		"@types/react-dom": "^18.2.0",
-		"babel-loader": "^9.2.1",
-		"css-loader": "^7.1.2",
-		"cypress": "^14.4.0",
+		"@vitejs/plugin-vue": "^5.0.0",
 		"less": "^4.2.0",
-		"less-loader": "^12.2.0",
-		"plasmo": "^0.90.5",
-		"prettier": "3.3.3",
-		"style-loader": "^4.0.0",
-		"ts-loader": "^9.5.1",
 		"typescript": "^5.3.0",
-		"webpack": "^5.99.9"
+		"vite": "^5.0.0",
+		"vue": "^3.4.0",
+		"vue-tsc": "^1.8.0"
 	},
-	"manifest": {
-		"name": "GifShot - 屏幕录制 GIF 插件",
-		"description": "一键录制屏幕并生成 GIF 动图",
-		"permissions": [
-			"activeTab",
-			"desktopCapture",
-			"storage",
-			"downloads",
-			"tabCapture",
-			"tabs"
-		],
-		"web_accessible_resources": [
-			{
-				"resources": [
-					"assets/gif.worker.js"
-				],
-				"matches": [
-					"<all_urls>"
-				]
-			}
-		]
+	"dependencies": {
+		"gif.js": "^0.2.0"
 	}
 }

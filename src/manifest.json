@@ -1,0 +1,32 @@
+{
+	"manifest_version": 3,
+	"name": "GifShot - 屏幕录制 GIF 插件",
+	"version": "1.0.0",
+	"description": "一键录制屏幕并生成 GIF 动图",
+	"permissions": [
+		"activeTab",
+		"desktopCapture",
+		"storage",
+		"downloads",
+		"tabCapture",
+		"tabs"
+	],
+	"action": {
+		"default_popup": "popup.html",
+		"default_title": "GifShot"
+	},
+	"background": {
+		"service_worker": "background.js"
+	},
+	"icons": {
+		"16": "icons/icon16.png",
+		"48": "icons/icon48.png",
+		"128": "icons/icon128.png"
+	},
+	"web_accessible_resources": [
+		{
+			"resources": ["gif.worker.js"],
+			"matches": ["<all_urls>"]
+		}
+	]
+}

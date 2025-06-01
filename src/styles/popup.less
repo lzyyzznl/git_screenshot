@@ -1,0 +1,280 @@
+/* 全局样式重置 */
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	font-family: "Microsoft YaHei", -apple-system, BlinkMacSystemFont, "Segoe UI",
+		Roboto, sans-serif;
+	font-size: 14px;
+	color: #333;
+	background: #fff;
+}
+
+/* 按钮基础样式 */
+button {
+	font-family: inherit;
+	font-size: inherit;
+	outline: none;
+
+	&:focus {
+		outline: 2px solid #3498db;
+		outline-offset: 2px;
+	}
+}
+
+/* 输入框基础样式 */
+input {
+	font-family: inherit;
+
+	&:focus {
+		outline: 2px solid #3498db;
+		outline-offset: 1px;
+	}
+}
+
+/* 弹窗容器 */
+.popup-container {
+	width: 380px;
+	min-height: 400px;
+	padding: 20px;
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	color: white;
+}
+
+/* 头部 */
+.header {
+	text-align: center;
+	margin-bottom: 20px;
+
+	h2 {
+		margin: 0 0 8px 0;
+		font-size: 24px;
+		font-weight: 600;
+	}
+
+	p {
+		margin: 0;
+		opacity: 0.8;
+		font-size: 12px;
+	}
+}
+
+/* 内容区域 */
+.content {
+	background: rgba(255, 255, 255, 0.1);
+	border-radius: 12px;
+	padding: 20px;
+	backdrop-filter: blur(10px);
+}
+
+/* 录制选项 */
+.record-options {
+	h3 {
+		margin: 0 0 16px 0;
+		font-size: 16px;
+		text-align: center;
+	}
+}
+
+.option-buttons {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	margin-bottom: 20px;
+}
+
+.option-btn {
+	display: flex;
+	align-items: center;
+	padding: 12px 16px;
+	border: 2px solid rgba(255, 255, 255, 0.3);
+	border-radius: 8px;
+	background: rgba(255, 255, 255, 0.1);
+	color: white;
+	font-size: 14px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+
+	&:hover {
+		background: rgba(255, 255, 255, 0.2);
+		border-color: rgba(255, 255, 255, 0.5);
+		transform: translateY(-2px);
+	}
+
+	.icon {
+		margin-right: 10px;
+		font-size: 18px;
+	}
+}
+
+/* 设置 */
+.settings {
+	label {
+		display: block;
+		margin-bottom: 8px;
+		font-size: 14px;
+	}
+
+	input {
+		width: 80px;
+		padding: 6px 8px;
+		border: 1px solid rgba(255, 255, 255, 0.3);
+		border-radius: 4px;
+		background: rgba(255, 255, 255, 0.1);
+		color: white;
+		margin-left: 8px;
+
+		&::placeholder {
+			color: rgba(255, 255, 255, 0.6);
+		}
+	}
+}
+
+/* 录制状态 */
+.recording {
+	text-align: center;
+
+	.recording-indicator {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin-bottom: 16px;
+		font-size: 16px;
+		font-weight: 500;
+
+		.pulse {
+			width: 12px;
+			height: 12px;
+			background: #e74c3c;
+			border-radius: 50%;
+			margin-right: 8px;
+			animation: pulse 1s infinite;
+		}
+	}
+
+	.timer {
+		font-size: 24px;
+		font-weight: 600;
+		margin-bottom: 20px;
+		font-family: "Courier New", monospace;
+	}
+
+	.stop-btn {
+		padding: 10px 24px;
+		background: #e74c3c;
+		color: white;
+		border: none;
+		border-radius: 6px;
+		font-size: 14px;
+		font-weight: 500;
+		cursor: pointer;
+		transition: background 0.2s ease;
+
+		&:hover {
+			background: #c0392b;
+		}
+	}
+}
+
+/* 预览区域 */
+.preview {
+	text-align: center;
+
+	h3 {
+		margin: 0 0 16px 0;
+		font-size: 16px;
+	}
+
+	.gif-preview {
+		max-width: 100%;
+		max-height: 200px;
+		border-radius: 8px;
+		margin-bottom: 16px;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+	}
+
+	.preview-actions {
+		display: flex;
+		gap: 12px;
+		justify-content: center;
+
+		button {
+			padding: 8px 16px;
+			border: none;
+			border-radius: 6px;
+			font-size: 14px;
+			font-weight: 500;
+			cursor: pointer;
+			transition: all 0.2s ease;
+		}
+
+		.save-btn {
+			background: #27ae60;
+			color: white;
+
+			&:hover {
+				background: #219a52;
+			}
+		}
+
+		.reset-btn {
+			background: rgba(255, 255, 255, 0.2);
+			color: white;
+			border: 1px solid rgba(255, 255, 255, 0.3);
+
+			&:hover {
+				background: rgba(255, 255, 255, 0.3);
+			}
+		}
+	}
+}
+
+/* 处理状态 */
+.processing {
+	text-align: center;
+	padding: 40px 20px;
+
+	.loader {
+		width: 40px;
+		height: 40px;
+		border: 4px solid rgba(255, 255, 255, 0.3);
+		border-top: 4px solid white;
+		border-radius: 50%;
+		animation: spin 1s linear infinite;
+		margin: 0 auto 16px;
+	}
+
+	p {
+		margin: 0;
+		font-size: 14px;
+		opacity: 0.8;
+	}
+}
+
+/* 动画 */
+@keyframes pulse {
+	0% {
+		transform: scale(1);
+		opacity: 1;
+	}
+	50% {
+		transform: scale(1.2);
+		opacity: 0.7;
+	}
+	100% {
+		transform: scale(1);
+		opacity: 1;
+	}
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
