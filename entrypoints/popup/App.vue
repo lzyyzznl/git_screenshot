@@ -7,17 +7,39 @@ import {
 	ElOption,
 	ElSwitch,
 	ElButton,
+	ElTag,
+	ElDivider,
+	ElAlert,
 } from "element-plus";
 import { keyboardShortcuts } from "../../utils/keyboardShortcuts";
 
-// 录制配置
+const recordModes = [
+	{
+		value: "screen",
+		label: "屏幕录制",
+		icon: "i-mdi-monitor",
+		desc: "录制整个屏幕",
+	},
+	{
+		value: "tab",
+		label: "标签页录制",
+		icon: "i-mdi-tab",
+		desc: "录制当前标签页",
+	},
+	{
+		value: "area",
+		label: "区域录制",
+		icon: "i-mdi-crop-free",
+		desc: "录制指定区域",
+	},
+];
+
 const recordMode = ref("screen");
 const resolution = ref("1080p");
 const frameRate = ref("30");
 const audioEnabled = ref(true);
 const isRecording = ref(false);
 
-// 从存储加载用户偏好
 const loadPreferences = async () => {
 	try {
 		const result = await browser.storage.local.get([
@@ -26,7 +48,6 @@ const loadPreferences = async () => {
 			"frameRate",
 			"audioEnabled",
 		]);
-
 		if (result.recordMode) recordMode.value = result.recordMode;
 		if (result.resolution) resolution.value = result.resolution;
 		if (result.frameRate) frameRate.value = result.frameRate;
@@ -36,8 +57,6 @@ const loadPreferences = async () => {
 		console.error("加载用户偏好失败:", error);
 	}
 };
-
-// 保存用户偏好到存储
 const savePreferences = async () => {
 	try {
 		await browser.storage.local.set({
@@ -50,26 +69,12 @@ const savePreferences = async () => {
 		console.error("保存用户偏好失败:", error);
 	}
 };
-
-// 监听配置变化并保存
 watch([recordMode, resolution, frameRate, audioEnabled], savePreferences);
 
-// 开始录制功能
 const startRecording = async () => {
 	isRecording.value = true;
-
 	try {
-		// 保存当前配置
 		await savePreferences();
-
-		console.log("开始录制:", {
-			mode: recordMode.value,
-			resolution: resolution.value,
-			frameRate: frameRate.value,
-			audio: audioEnabled.value,
-		});
-
-		// 向后台脚本发送录制开始消息
 		const response = await browser.runtime.sendMessage({
 			action: "startRecording",
 			config: {
@@ -79,165 +84,211 @@ const startRecording = async () => {
 				audio: audioEnabled.value,
 			},
 		});
-
-		// 检查响应
 		if (response && response.success) {
-			console.log("录制启动成功");
-			// 关闭 popup
 			window.close();
 		} else {
 			throw new Error(response?.error || "录制启动失败");
 		}
 	} catch (error) {
-		console.error("录制启动失败:", error);
 		isRecording.value = false;
-
-		// 显示错误信息给用户
-		// TODO: 添加更好的错误提示 UI
 		const errorMessage = error instanceof Error ? error.message : String(error);
 		alert(`录制启动失败: ${errorMessage}`);
 	}
 };
 
-// 显示键盘快捷键帮助
+const openInNewTab = () => {
+	const url = browser.runtime.getURL("/popup.html");
+	browser.tabs.create({ url });
+};
+
 const showKeyboardHelp = () => {
 	keyboardShortcuts.toggleHelp();
 };
-
-// 组件挂载时加载偏好
 onMounted(() => {
 	loadPreferences();
 });
 </script>
 
 <template>
-	<div class="w-380px h-580px p-4 bg-gray-50 flex flex-col text-gray-800">
-		<!-- 标题栏 -->
-		<header class="flex items-center justify-center gap-2 mb-4">
-			<div class="i-mdi-record text-red-500 text-2xl"></div>
-			<h1 class="text-lg font-bold">录屏助手</h1>
-		</header>
-
-		<!-- 录制模式选择区 -->
-		<section class="mb-4">
-			<h2 class="text-sm font-medium text-gray-600 mb-2">录制模式</h2>
-			<el-radio-group v-model="recordMode" size="large" class="w-full flex">
-				<el-radio-button label="screen" class="flex-1">
-					<div class="flex items-center justify-center gap-2">
-						<div class="i-mdi-monitor"></div>
-						<span>屏幕</span>
-					</div>
-				</el-radio-button>
-				<el-radio-button label="tab" class="flex-1">
-					<div class="flex items-center justify-center gap-2">
-						<div class="i-mdi-tab"></div>
-						<span>标签页</span>
-					</div>
-				</el-radio-button>
-				<el-radio-button label="area" class="flex-1">
-					<div class="flex items-center justify-center gap-2">
-						<div class="i-mdi-crop-free"></div>
-						<span>区域</span>
-					</div>
-				</el-radio-button>
-			</el-radio-group>
-		</section>
-
-		<!-- 录制参数配置区 -->
-		<section class="bg-white p-4 rounded-lg shadow-sm mb-4">
-			<h2 class="text-sm font-medium text-gray-600 mb-3">录制参数</h2>
-
-			<!-- 分辨率选择 -->
-			<div class="flex items-center justify-between mb-3">
-				<label class="text-sm text-gray-700 flex items-center gap-2">
-					<div class="i-mdi-aspect-ratio"></div>
-					分辨率
-				</label>
-				<el-select
-					v-model="resolution"
-					placeholder="选择分辨率"
-					class="w-48"
-					size="small"
-				>
-					<el-option label="1080p (FHD)" value="1080p" />
-					<el-option label="720p (HD)" value="720p" />
-					<el-option label="480p (SD)" value="480p" />
-				</el-select>
-			</div>
-
-			<!-- 帧率选择 -->
-			<div class="flex items-center justify-between mb-3">
-				<label class="text-sm text-gray-700 flex items-center gap-2">
-					<div class="i-mdi-speedometer"></div>
-					帧率
-				</label>
-				<el-select
-					v-model="frameRate"
-					placeholder="选择帧率"
-					class="w-48"
-					size="small"
-				>
-					<el-option label="30 fps" value="30" />
-					<el-option label="24 fps" value="24" />
-					<el-option label="20 fps" value="20" />
-				</el-select>
-			</div>
-
-			<!-- 音频开关 -->
-			<div class="flex items-center justify-between">
-				<label class="text-sm text-gray-700 flex items-center gap-2">
-					<div class="i-mdi-microphone"></div>
-					音频录制
-				</label>
-				<el-switch v-model="audioEnabled" />
-			</div>
-		</section>
-
-		<!-- 开始录制按钮 -->
-		<el-button
-			type="primary"
-			size="large"
-			class="w-full !h-12 !text-base !font-medium !rounded-lg"
-			:loading="isRecording"
-			:disabled="isRecording"
-			@click="startRecording"
+	<div
+		class="w-96 min-h-580px bg-gradient-to-b from-emerald-50 to-white rounded-2xl shadow-2xl p-0 flex flex-col items-center justify-start"
+	>
+		<!-- 卡片容器 -->
+		<div
+			class="w-full max-w-96 bg-white rounded-2xl shadow-lg overflow-hidden mt-4"
 		>
-			<template v-if="!isRecording">
-				<div class="flex items-center justify-center gap-2">
-					<div class="i-mdi-record-circle text-white"></div>
-					开始录制
-				</div>
-			</template>
-			<template v-else>
-				<span class="animate-pulse">准备录制中...</span>
-			</template>
-		</el-button>
-
-		<!-- 底部 -->
-		<footer class="mt-auto pt-2">
-			<!-- 快捷键提示和帮助 -->
+			<!-- 渐变头部 -->
 			<div
-				class="text-xs text-gray-500 text-center bg-gray-100 p-2 rounded-md mb-2"
+				class="bg-gradient-to-r from-emerald-500 to-teal-500 text-white p-5 flex flex-col items-center relative"
 			>
-				<p class="flex items-center justify-center gap-1">
-					<span class="i-mdi-keyboard"></span>
-					<span>结束录制快捷键：Ctrl+Shift+R</span>
-				</p>
+				<el-button
+					icon="i-mdi-open-in-new"
+					circle
+					size="small"
+					class="absolute top-4 right-4 !bg-white/20 !border-0 text-white hover:!bg-white/30"
+					@click="openInNewTab"
+				/>
+				<div
+					class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mb-2"
+				>
+					<div class="i-mdi-record text-red-500 text-2xl"></div>
+				</div>
+				<h1 class="text-xl font-bold tracking-wide">录屏助手</h1>
 			</div>
 
-			<!-- 快捷键帮助按钮 -->
-			<el-button
-				type="info"
-				text
-				size="small"
-				class="w-full !text-xs"
-				@click="showKeyboardHelp"
-			>
-				<div class="flex items-center justify-center gap-1">
-					<div class="i-mdi-help-circle-outline"></div>
-					查看所有快捷键 (F1)
+			<div class="p-6 space-y-6">
+				<!-- 录制模式选择 -->
+				<div>
+					<div class="flex items-center gap-2 mb-2">
+						<div class="i-mdi-cog text-gray-400"></div>
+						<span class="text-sm font-semibold text-gray-800">录制模式</span>
+					</div>
+					<div class="space-y-3">
+						<el-radio-group v-model="recordMode" class="w-full">
+							<div class="flex flex-col gap-2">
+								<div
+									v-for="mode in recordModes"
+									:key="mode.value"
+									:class="[
+										'flex items-center p-3 rounded-xl border-2 cursor-pointer transition-all',
+										recordMode === mode.value
+											? 'border-emerald-500 bg-emerald-50'
+											: 'border-gray-200 hover:border-gray-300',
+									]"
+								>
+									<el-radio :label="mode.value" class="mr-0">
+										<template #default>
+											<div class="flex items-center gap-3 ml-2">
+												<div
+													:class="[
+														mode.icon,
+														'text-xl',
+														recordMode === mode.value
+															? 'text-emerald-600'
+															: 'text-gray-500',
+													]"
+												></div>
+												<div>
+													<div class="font-medium text-gray-800">
+														{{ mode.label }}
+													</div>
+													<div class="text-xs text-gray-500 mt-1">
+														{{ mode.desc }}
+													</div>
+												</div>
+												<el-tag
+													v-if="recordMode === mode.value"
+													type="success"
+													size="small"
+													class="bg-emerald-100 text-emerald-700 ml-2"
+													>已选择</el-tag
+												>
+											</div>
+										</template>
+									</el-radio>
+								</div>
+							</div>
+						</el-radio-group>
+					</div>
 				</div>
-			</el-button>
-		</footer>
+
+				<el-divider class="!my-4" />
+
+				<!-- 录制参数配置 -->
+				<div>
+					<div class="flex items-center gap-2 mb-2">
+						<div class="i-mdi-tune text-gray-400"></div>
+						<span class="text-sm font-semibold text-gray-800">录制参数</span>
+					</div>
+					<div class="grid grid-cols-2 gap-4">
+						<div class="space-y-2">
+							<label
+								class="text-xs font-medium text-gray-600 uppercase tracking-wide"
+								>分辨率</label
+							>
+							<el-select v-model="resolution" class="w-full">
+								<el-option value="1080p" label="1080p">
+									<div class="flex items-center justify-between w-full">
+										<span>1080p</span>
+										<el-tag size="small" type="info">高清</el-tag>
+									</div>
+								</el-option>
+								<el-option value="720p" label="720p" />
+								<el-option value="480p" label="480p" />
+							</el-select>
+						</div>
+						<div class="space-y-2">
+							<label
+								class="text-xs font-medium text-gray-600 uppercase tracking-wide"
+								>帧率</label
+							>
+							<el-select v-model="frameRate" class="w-full">
+								<el-option value="30" label="30 FPS">
+									<div class="flex items-center justify-between w-full">
+										<span>30 FPS</span>
+										<el-tag size="small" type="warning">推荐</el-tag>
+									</div>
+								</el-option>
+								<el-option value="24" label="24 FPS" />
+								<el-option value="20" label="20 FPS" />
+							</el-select>
+						</div>
+					</div>
+					<div
+						class="flex items-center justify-between p-3 bg-gray-50 rounded-lg mt-4"
+					>
+						<div class="flex items-center gap-3">
+							<div
+								:class="
+									audioEnabled
+										? 'i-mdi-microphone text-emerald-600'
+										: 'i-mdi-microphone-off text-gray-400'
+								"
+							/>
+							<div>
+								<div class="text-sm font-medium text-gray-800">录制音频</div>
+								<div class="text-xs text-gray-500">包含系统和麦克风音频</div>
+							</div>
+						</div>
+						<el-switch v-model="audioEnabled" />
+					</div>
+				</div>
+
+				<el-divider class="!my-4" />
+
+				<!-- 开始录制按钮 -->
+				<el-button
+					type="primary"
+					size="large"
+					class="w-full h-12 bg-gradient-to-r from-emerald-500 to-teal-500 border-0 font-semibold shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl text-white text-base"
+					:loading="isRecording"
+					:disabled="isRecording"
+					@click="startRecording"
+				>
+					<template v-if="!isRecording">开始录制</template>
+					<template v-else>启动中...</template>
+				</el-button>
+
+				<!-- 快捷键说明 -->
+				<el-alert
+					type="info"
+					:closable="false"
+					class="bg-blue-50 border-blue-200 mt-4"
+				>
+					<template #title>
+						<div class="flex items-center gap-2">
+							<div class="i-mdi-keyboard"></div>
+							<span class="font-medium">快捷键提示</span>
+						</div>
+					</template>
+					<div class="text-xs mt-1">
+						结束录制：<kbd
+							class="px-2 py-1 bg-white rounded text-xs font-mono border"
+							>Ctrl+Shift+R</kbd
+						>
+					</div>
+				</el-alert>
+			</div>
+		</div>
 	</div>
 </template>

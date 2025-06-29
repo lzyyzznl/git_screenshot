@@ -1,8 +1,13 @@
-import { defineConfig, presetUno, presetIcons, presetTypography } from "unocss";
+import {
+	defineConfig,
+	presetWind3,
+	presetIcons,
+	presetTypography,
+} from "unocss";
 
 export default defineConfig({
 	presets: [
-		presetUno(),
+		presetWind3(),
 		presetIcons({
 			scale: 1.2,
 			warn: true,
