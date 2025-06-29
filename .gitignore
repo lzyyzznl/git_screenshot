@@ -1,5 +1,6 @@
-# Build outputs
-.wxt/
-dist/
+# 依赖文件
 node_modules/
-extension/
+.wxt/
+.output/
+.vscode/
+mcp.json

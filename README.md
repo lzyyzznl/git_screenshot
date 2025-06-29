@@ -1,192 +1,193 @@
-# GifShot - 屏幕录制 GIF 插件
+# 🎬 浏览器录屏助手
 
-![GifShot Logo](public/icons/icon48.png)
+功能强大的浏览器录屏工具，支持屏幕注释、视频转换和多格式导出。
 
-## 简介
+## ✨ 功能特性
 
-GifShot 是一款基于 **WXT 框架** 开发的 Chrome 浏览器插件，支持一键录制当前标签页、桌面或应用窗口的屏幕内容，并将其保存为 GIF 动图，便于分享和传播。
+- 🎥 **多种录制模式**：支持整个屏幕、窗口、标签页录制
+- ✏️ **实时注释**：录制过程中支持画笔、荧光笔、箭头等绘图工具
+- 🎨 **丰富工具**：12 种颜色选择，可调节画笔大小，撤销/重做功能
+- 📹 **格式转换**：支持 WebM 转 MP4、GIF 格式
+- ⌨️ **快捷键**：完整的键盘快捷键支持
+- 🔧 **性能优化**：智能内存管理和录制质量自适应
+- 🌏 **跨浏览器**：支持 Chrome、Firefox、Edge 等主流浏览器
+- 📱 **响应式 UI**：现代化的用户界面设计
 
-## 功能特性
+## 🚀 技术栈
 
-### 🎯 核心功能
-- **屏幕录制** - 支持录制当前标签页、整个桌面或指定应用窗口
-- **GIF 生成** - 实时或录制结束后将视频内容转码为 GIF 动图
-- **本地保存** - 支持将生成的 GIF 文件保存到本地
-- **录制时长控制** - 用户可自定义录制时长或手动停止录制
+- **框架**：Vue 3 + Composition API
+- **构建工具**：WXT (Web Extension Tools)
+- **UI 库**：Element Plus
+- **样式**：UnoCSS
+- **类型安全**：TypeScript
+- **图标**：Iconify
+- **视频处理**：MediaRecorder API + Web Workers
 
-### 🛠️ 高级功能
-- **录制区域选择** - 支持选择录制区域（如全屏、窗口、标签页、指定区域）
-- **简单编辑** - 支持裁剪、调整帧率、添加文字等简单编辑功能
-- **弹窗模式** - 提供简洁的弹窗界面和完整的应用界面
-
-## 技术架构
-
-### 技术栈
-- **框架**: WXT (Next-gen Web Extension Framework)
-- **前端框架**: Vue 3 + TypeScript
-- **构建工具**: Vite (通过 WXT 集成)
-- **依赖管理**: Yarn
-- **GIF 处理**: gif.js
-
-### 项目结构
-```
-git_screenshot/
-├── src/                          # 源码目录
-│   ├── entrypoints/             # WXT 入口点
-│   │   ├── background.ts        # 后台脚本
-│   │   ├── popup/               # 弹窗页面
-│   │   │   ├── index.html
-│   │   │   ├── main.ts
-│   │   │   ├── App.vue
-│   │   │   └── style.css
-│   │   └── app/                 # 完整版应用
-│   │       ├── index.html
-│   │       ├── main.ts
-│   │       ├── App.vue
-│   │       └── style.css
-│   ├── components/              # Vue组件 (已迁移)
-│   ├── utils/                   # 工具函数
-│   │   └── gifGenerator.ts      # GIF生成器
-│   ├── styles/                  # 样式文件 (已迁移)
-│   ├── types/                   # 类型定义
-│   └── public/                  # 静态资源 (已迁移)
-├── public/                      # WXT 公共资源
-│   └── gif.worker.js           # GIF Worker 脚本
-├── extension/                   # 构建输出目录
-├── wxt.config.ts               # WXT 配置文件
-├── package.json
-├── tsconfig.json
-└── README.md
-```
-
-## 开发指南
+## 🛠️ 开发环境
 
 ### 环境要求
-- Node.js >= 16
-- Yarn >= 1.22
-- WXT >= 0.20.0
+
+- Node.js >= 18.0.0
+- npm >= 8.0.0
+- Chrome >= 88 或 Firefox >= 109
 
 ### 安装依赖
+
 ```bash
-yarn install
+npm install
 ```
 
 ### 开发模式
-```bash
-# Chrome 开发模式
-yarn dev
 
-# Firefox 开发模式
-yarn dev:firefox
+```bash
+# Chrome开发模式
+npm run dev
+
+# Firefox开发模式
+npm run dev:firefox
 ```
 
-### 构建项目
-```bash
-# 构建 Chrome 版本
-yarn build
+### 构建生产版本
 
-# 构建 Firefox 版本
-yarn build:firefox
+```bash
+# 构建所有浏览器版本
+npm run build:all
+
+# 构建Chrome版本
+npm run build:chrome
+
+# 构建Firefox版本
+npm run build:firefox
 ```
 
-### 打包发布
-```bash
-# 打包 Chrome 版本
-yarn zip
+### 打包分发
 
-# 打包 Firefox 版本
-yarn zip:firefox
+```bash
+# 创建所有浏览器的ZIP包
+npm run package
+
+# 创建Chrome ZIP包
+npm run zip:chrome
+
+# 创建Firefox ZIP包
+npm run zip:firefox
 ```
 
-### 安装插件
-1. 构建项目后，在 Chrome 浏览器中打开 `chrome://extensions/`
-2. 开启"开发者模式"
-3. 点击"加载已解压的扩展程序"
-4. 选择项目根目录下的 `extension/chrome-mv3` 文件夹
+## 📦 项目结构
 
-## 使用说明
+```
+browser-screen-recorder/
+├── entrypoints/           # 扩展入口点
+│   ├── background/        # 后台脚本
+│   ├── content/          # 内容脚本
+│   ├── popup/            # 弹出窗口
+│   └── result/           # 结果页面
+├── components/           # Vue组件
+├── composables/          # Vue 3 Composables
+├── utils/               # 工具函数
+├── workers/             # Web Workers
+├── types/               # TypeScript类型定义
+├── public/              # 静态资源
+│   └── icon/            # 扩展图标
+├── scripts/             # 构建脚本
+├── dist/                # 构建输出
+└── .wxt/                # WXT缓存
+```
 
-### 基本操作
-1. 点击浏览器工具栏中的 GifShot 图标
-2. 选择录制类型（当前标签页/整个桌面/应用窗口）
-3. 设置录制时长（1-60秒）
-4. 点击"开始录制"
-5. 录制完成后，预览生成的 GIF
-6. 点击"保存 GIF"下载到本地
+## 🔧 开发指南
 
-### 录制类型说明
-- **当前标签页**: 只录制当前浏览器标签页内容
-- **整个桌面**: 录制整个屏幕内容
-- **应用窗口**: 选择特定应用窗口进行录制
+### 添加新功能
 
-### 界面模式
-- **弹窗模式**: 简洁的快速录制界面
-- **完整版**: 功能完整的应用界面，支持更多设置选项
+1. 在相应目录创建新文件
+2. 更新类型定义（如需要）
+3. 添加单元测试
+4. 更新文档
 
-## WXT 框架优势
+### 调试扩展
 
-### 🚀 现代化开发体验
-- **自动类型生成**: 自动生成 TypeScript 类型定义
-- **热重载**: 开发时自动重载插件
-- **多浏览器支持**: 一套代码支持 Chrome、Firefox、Safari 等
+1. 运行开发模式：`npm run dev`
+2. 在 Chrome 中打开扩展管理页面
+3. 加载未打包的扩展：选择`.wxt/chrome-mv3`目录
+4. 查看控制台输出和调试信息
 
-### 🛠️ 强大的构建系统
-- **Vite 集成**: 享受 Vite 的快速构建和热更新
-- **自动优化**: 自动处理 manifest 版本兼容性
-- **模块化架构**: 支持 Vue、React、Svelte 等前端框架
+### 版本管理
 
-### 📦 简化的项目结构
-- **入口点系统**: 清晰的文件组织结构
-- **自动发现**: 自动识别和配置入口点
-- **零配置**: 开箱即用的最佳实践配置
+```bash
+# 升级补丁版本（1.0.0 -> 1.0.1）
+npm run release:patch
 
-## 主要流程
+# 升级次版本（1.0.0 -> 1.1.0）
+npm run release:minor
 
-1. 用户点击插件图标，弹出操作界面
-2. 选择录制类型并设置参数
-3. 通过 `getDisplayMedia` API 获取屏幕流
-4. 使用 `MediaRecorder` 录制视频
-5. 录制结束后，使用 gif.js 将视频转换为 GIF
-6. 提供预览和下载功能
+# 升级主版本（1.0.0 -> 2.0.0）
+npm run release:major
+```
 
-## 浏览器兼容性
+## 📋 部署清单
 
-- Chrome 88+
-- Edge 88+
-- Firefox 109+ (需要单独构建)
-- 其他基于 Chromium 的浏览器
+### Chrome Web Store
 
-## 迁移说明
+1. 构建 Chrome 版本：`npm run build:chrome`
+2. 创建 ZIP 包：`npm run zip:chrome`
+3. 登录[Chrome Web Store 开发者控制台](https://chrome.google.com/webstore/devconsole)
+4. 上传 ZIP 文件
+5. 填写商店信息和截图
+6. 提交审核
 
-本项目已从传统的 Vite + Vue 架构迁移到 **WXT 框架**：
+### Firefox Add-ons
 
-### 迁移内容
-- ✅ 项目结构重构为 WXT 标准
-- ✅ 入口点迁移到 `src/entrypoints/`
-- ✅ 配置文件更新为 `wxt.config.ts`
-- ✅ 构建脚本更新为 WXT 命令
-- ✅ Vue 3 + TypeScript 完全兼容
-- ✅ 所有功能保持一致
+1. 构建 Firefox 版本：`npm run build:firefox`
+2. 创建 ZIP 包：`npm run zip:firefox`
+3. 登录[Firefox 开发者中心](https://addons.mozilla.org/developers/)
+4. 上传 ZIP 文件
+5. 填写附加组件信息
+6. 提交审核
 
-### 迁移优势
-- 🚀 更快的开发构建速度
-- 🔧 更好的开发者体验
-- 📱 更简单的多浏览器支持
-- 🛠️ 更现代的工具链
+### 发布前检查
 
-## 许可证
+- [ ] 版本号已更新
+- [ ] 功能测试完成
+- [ ] 权限声明正确
+- [ ] 图标和截图准备
+- [ ] 商店描述更新
+- [ ] 隐私政策确认
 
-MIT License
+## 🧪 测试
 
-## 贡献
+```bash
+# 类型检查
+npm run compile
+
+# 代码检查
+npm run lint
+
+# 单元测试
+npm test
+```
+
+## 📄 许可证
+
+本项目采用 MIT 许可证。详见 [LICENSE](LICENSE) 文件。
+
+## 🤝 贡献
 
 欢迎提交 Issue 和 Pull Request！
 
-## 更新日志
+## 📞 支持
 
-### v1.0.0 (WXT 重构版)
-- 🎉 迁移到 WXT 框架
-- ✨ 保持所有原有功能
-- 🚀 提升开发体验和构建性能
-- 📦 优化项目结构和配置
-- 🔧 支持多浏览器构建 
+如有问题，请通过以下方式联系：
+
+- 提交 [GitHub Issue](https://github.com/screen-recorder/browser-extension/issues)
+- 发送邮件至：support@screenrecorder.com
+
+---
+
+**快捷键参考**
+
+| 功能            | Windows/Linux | macOS       |
+| --------------- | ------------- | ----------- |
+| 停止录制        | Ctrl+Shift+R  | Cmd+Shift+R |
+| 暂停/恢复       | Ctrl+Shift+P  | Cmd+Shift+P |
+| 显示/隐藏工具栏 | Ctrl+Shift+H  | Cmd+Shift+H |
+| 撤销            | Ctrl+Z        | Cmd+Z       |
+| 重做            | Ctrl+Y        | Cmd+Y       |

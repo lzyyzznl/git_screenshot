@@ -1,0 +1,20 @@
+{
+  "recommendations": [
+    "vue.volar",
+    "antfu.unocss",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "bradlc.vscode-tailwindcss",
+    "formulahendry.auto-rename-tag",
+    "christian-kohler.path-intellisense",
+    "ms-vscode.vscode-typescript-next",
+    "johnsoncodehk.vscode-typescript-vue-plugin",
+    "antfu.iconify",
+    "usernamehw.errorlens",
+    "gruntfuggly.todo-tree"
+  ],
+  "unwantedRecommendations": [
+    "hookyqr.beautify",
+    "ms-vscode.vscode-json"
+  ]
+}
